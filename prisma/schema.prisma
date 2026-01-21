@@ -1,0 +1,137 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Seed script configuration
+// Run with: npm run db:seed
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  MEMBER
+}
+
+enum EventType {
+  MAINTENANCE
+  CHANGE
+  MEETING
+  TASK
+}
+
+enum Priority {
+  LOW
+  MED
+  HIGH
+}
+
+enum ImpactScope {
+  CUSTOMER
+  SERVICE
+  INTERNAL
+}
+
+enum ShiftType {
+  DAY
+  NIGHT
+  WEEKEND
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(MEMBER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  ownedEvents      CalendarEvent[]     @relation("EventOwner")
+  participatedEvents EventParticipant[]
+  assignedShifts   OnCallShift[]      @relation("ShiftAssignee")
+  backupShifts     OnCallShift[]      @relation("ShiftBackup")
+  auditLogs        AuditLog[]
+
+  @@map("users")
+}
+
+model CalendarEvent {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  type        EventType
+  priority    Priority    @default(MED)
+  impactScope ImpactScope @default(INTERNAL)
+  startAt     DateTime
+  endAt       DateTime
+  ownerUserId String
+  tags        Json        @default("[]")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  owner        User               @relation("EventOwner", fields: [ownerUserId], references: [id], onDelete: Cascade)
+  participants EventParticipant[]
+
+  @@index([startAt, endAt])
+  @@index([ownerUserId])
+  @@map("calendar_events")
+}
+
+model EventParticipant {
+  eventId String
+  userId  String
+
+  event CalendarEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([eventId, userId])
+  @@map("event_participants")
+}
+
+model OnCallShift {
+  id                String    @id @default(cuid())
+  shiftType         ShiftType
+  startAt           DateTime
+  endAt             DateTime
+  assigneeUserId    String
+  backupUserId      String?
+  notes             String?
+  handoverChecklist Json      @default("{}")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  assignee User? @relation("ShiftAssignee", fields: [assigneeUserId], references: [id], onDelete: Cascade)
+  backup   User? @relation("ShiftBackup", fields: [backupUserId], references: [id], onDelete: SetNull)
+
+  @@index([startAt, endAt])
+  @@index([assigneeUserId])
+  @@map("oncall_shifts")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorUserId String
+  action     String
+  entity     String
+  entityId   String?
+  meta       Json     @default("{}")
+  createdAt  DateTime @default(now())
+
+  // Relations
+  actor User @relation(fields: [actorUserId], references: [id], onDelete: Cascade)
+
+  @@index([actorUserId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
