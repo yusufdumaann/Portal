@@ -2,7 +2,33 @@
 
 Modern, estetik ve üretim kalitesine yakın bir TechOps ekibi yönetim portalı.
 
-## Özellikler
+## 🚀 Hızlı Başlangıç
+
+### Ubuntu Sunucusunda Kurulum
+
+**Sıfırdan kurulum için detaylı rehber:**
+👉 **[UBUNTU_FULL_SETUP.md](./UBUNTU_FULL_SETUP.md)** - Tüm adımları içeren kapsamlı kurulum rehberi
+
+### Hızlı Komutlar
+
+```bash
+# Sunucuda projeyi başlat
+cd /var/www/ops-portal
+chmod +x scripts/start-server.sh
+./scripts/start-server.sh
+
+# Veya npm script ile
+npm run server:start
+```
+
+## 📚 Dokümantasyon
+
+- **[UBUNTU_FULL_SETUP.md](./UBUNTU_FULL_SETUP.md)** - Ubuntu sunucusunda sıfırdan kurulum rehberi
+- **[SYNC_GUIDE.md](./SYNC_GUIDE.md)** - Yerel ve sunucu arasında senkronizasyon rehberi
+- **[SERVER_START.md](./SERVER_START.md)** - Sunucu başlatma rehberi
+- **[UPDATE_EMAILS.md](./UPDATE_EMAILS.md)** - Email güncelleme rehberi
+
+## ✨ Özellikler
 
 - 🔐 **Kimlik Doğrulama & RBAC**: NextAuth.js ile güvenli giriş ve rol tabanlı yetkilendirme
 - 📅 **Operasyon Takvimi**: Event yönetimi, filtreleme, çakışma kontrolü
@@ -11,7 +37,7 @@ Modern, estetik ve üretim kalitesine yakın bir TechOps ekibi yönetim portalı
 - 👥 **Kullanıcı Yönetimi**: Admin paneli ile kullanıcı ve rol yönetimi
 - 🎨 **Modern UI**: shadcn/ui bileşenleri, dark/light mode, responsive tasarım
 
-## Teknolojiler
+## 🛠️ Teknolojiler
 
 - **Frontend**: Next.js 14+ (App Router) + TypeScript
 - **UI**: TailwindCSS + shadcn/ui + Lucide Icons
@@ -21,89 +47,13 @@ Modern, estetik ve üretim kalitesine yakın bir TechOps ekibi yönetim portalı
 - **Database**: PostgreSQL
 - **Deployment**: Normal hosting (VPS, PaaS, vb.)
 
-## Gereksinimler
+## 📋 Gereksinimler
 
-- Node.js 18+
-- PostgreSQL 12+ (yerel veya bulut)
+- Node.js 20+ (LTS önerilir) veya 22+
+- PostgreSQL 12+
+- Ubuntu 20.04+ (production için)
 
-## Hızlı Kurulum
-
-### 1. Bağımlılıkları Yükleyin
-
-```bash
-npm install
-```
-
-### 2. Environment Değişkenlerini Ayarlayın
-
-`.env` dosyası oluşturun:
-
-```env
-DATABASE_URL="postgresql://kullanici:sifre@localhost:5432/opsportal?schema=public"
-NEXTAUTH_SECRET="your-secret-key-change-in-production-min-32-chars"
-NEXTAUTH_URL="http://localhost:3000"
-NODE_ENV="development"
-```
-
-### 3. Veritabanını Hazırlayın
-
-#### Yerel PostgreSQL
-
-```bash
-# PostgreSQL'de veritabanı oluşturun
-createdb opsportal
-
-# Migration'ları çalıştırın
-npm run db:migrate
-
-# Seed data (örnek kullanıcılar)
-npm run db:seed
-```
-
-
-### 4. Development Server'ı Başlatın
-
-```bash
-npm run dev
-```
-
-Uygulama `http://localhost:3000` adresinde çalışacaktır.
-
-## Production Deployment
-
-### Build ve Başlatma
-
-```bash
-# Prisma client generate
-npm run db:generate
-
-# Production build
-npm run build
-
-# Start
-npm start
-```
-
-### PM2 ile Çalıştırma (Önerilen)
-
-```bash
-npm install -g pm2
-pm2 start npm --name "ops-portal" -- start
-pm2 startup
-pm2 save
-```
-
-### Hosting Seçenekleri
-
-- **VPS**: DigitalOcean, Linode, AWS EC2, vb.
-- **PaaS**: Vercel, Railway, Render, Heroku
-- **Cloud**: AWS, Google Cloud, Azure
-
-Detaylı deployment bilgileri için `SETUP.md` dosyasına bakın.
-
-## Kullanım
-
-### Giriş Bilgileri
+## 🔑 İlk Giriş Bilgileri
 
 Seed script çalıştırıldıktan sonra:
 
@@ -111,7 +61,9 @@ Seed script çalıştırıldıktan sonra:
 - **Manager**: `manager1@opsportal.local` / `Manager123!`
 - **Member**: `member1@opsportal.local` / `Member123!`
 
-**Production'da bu kullanıcıları değiştirmeyi unutmayın!**
+**⚠️ Production'da bu kullanıcıları değiştirmeyi unutmayın!**
+
+## 📖 Kullanım
 
 ### Roller ve Yetkiler
 
@@ -127,54 +79,54 @@ Seed script çalıştırıldıktan sonra:
 - `/users` - Kullanıcılar: Kullanıcı yönetimi (sadece ADMIN)
 - `/settings` - Ayarlar: Profil bilgileri, tema tercihi
 
-## API Endpoints
+## 🔧 Geliştirme
 
-- `POST /api/auth/[...nextauth]` - Giriş (NextAuth)
-- `GET/POST /api/events` - Event listesi/oluşturma
-- `GET/PUT/DELETE /api/events/:id` - Event işlemleri
-- `GET/POST /api/shifts` - Shift listesi/oluşturma
-- `GET/PUT/DELETE /api/shifts/:id` - Shift işlemleri
-- `GET /api/shifts/stats` - Nöbet istatistikleri
-- `GET/POST /api/users` - Kullanıcı listesi/oluşturma (ADMIN)
-- `PUT /api/users/:id/role` - Rol güncelleme (ADMIN)
-- `GET /api/calendar/ics` - ICS export
-
-## Geliştirme
-
-### Veritabanı İşlemleri
+### Yerel Geliştirme
 
 ```bash
-# Migration oluştur
+# Bağımlılıkları yükle
+npm install
+
+# .env dosyası oluştur
+cp .env.example .env
+
+# Veritabanı migration
 npm run db:migrate
 
-# Production migration
-npx prisma migrate deploy
-
-# Prisma Studio (veritabanı görüntüleyici)
-npm run db:studio
-
-# Seed data (sadece development)
+# Seed data
 npm run db:seed
+
+# Development server
+npm run dev
 ```
 
-### Build
+### Production Build
 
 ```bash
+npm install --production
+npm run db:generate
+npm run db:migrate:deploy
 npm run build
 npm start
 ```
 
-## Dokümantasyon
+## 📝 Script'ler
 
-- **SYNC_GUIDE.md**: Yerel ve sunucu arasında senkronizasyon rehberi
-- **UBUNTU_SETUP.md**: Ubuntu üzerinde adım adım kurulum rehberi
-- **SETUP.md**: Detaylı kurulum ve deployment rehberi
-- **DEPLOYMENT.md**: Production deployment detayları
-- **QUICKSTART.md**: Hızlı başlangıç rehberi
-- **UPDATE_EMAILS.md**: Email güncelleme rehberi
-- **API**: Route handler'lar `app/api` klasöründe
+```bash
+# Veritabanı
+npm run db:generate        # Prisma client generate
+npm run db:migrate         # Development migration
+npm run db:migrate:deploy  # Production migration
+npm run db:seed            # Seed data
+npm run db:update-emails   # Email güncelleme
 
-## Güvenlik
+# Sunucu
+npm run server:start       # Sunucuyu başlat
+npm run server:restart     # Sunucuyu yeniden başlat
+npm run server:update      # Güncelle ve yeniden başlat
+```
+
+## 🔒 Güvenlik
 
 - ✅ Environment variables asla commit edilmez
 - ✅ Password hashing (bcrypt)
@@ -185,21 +137,6 @@ npm start
 - ⚠️ Güçlü `NEXTAUTH_SECRET` kullanın
 - ⚠️ Database şifrelerini güçlü tutun
 
-## Sorun Giderme
-
-### Veritabanı Bağlantı Hatası
-- PostgreSQL'in çalıştığından emin olun
-- `.env` dosyasındaki `DATABASE_URL`'i kontrol edin
-- Firewall kurallarını kontrol edin
-
-### NextAuth Hatası
-- `NEXTAUTH_SECRET` en az 32 karakter olmalı
-- `NEXTAUTH_URL` production'da https:// ile başlamalı
-
-### Prisma Hatası
-- `npm run db:generate` çalıştırın
-- Migration'ları kontrol edin: `npm run db:migrate`
-
-## Lisans
+## 📄 Lisans
 
 MIT
